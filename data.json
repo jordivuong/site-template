@@ -1,0 +1,110 @@
+{
+  "fr": {
+    "seo": {
+      "index_title": "Nom du client | Accroche courte",
+      "index_description": "Description courte pour les moteurs de recherche (150-160 caractères).",
+      "cabinet_title": "L'équipe | Nom du client",
+      "cabinet_description": "Présentation de l'équipe.",
+      "actualites_title": "Actualités | Nom du client",
+      "actualites_description": "Actualités et publications.",
+      "mentions_title": "Mentions Légales | Nom du client",
+      "mentions_description": "Mentions légales et politique de confidentialité."
+    },
+    "menu": {
+      "presentation": "présentation",
+      "cabinet": "équipe",
+      "actualites": "actualités"
+    },
+    "presentation": {
+      "titre": "Titre principal de la page d'accueil",
+      "sous_titres": "Sous-titre • Spécialités • Mots-clés",
+      "contact": "contact@client.fr",
+      "adresse": "Adresse complète, ville",
+      "texte": "Texte de présentation principal. Peut contenir plusieurs paragraphes séparés par une ligne vide."
+    },
+    "membres": [
+      {
+        "nom": "Prénom NOM",
+        "role": "Fonction",
+        "email": "prenom@client.fr",
+        "telephone": "+33 0 00 00 00 00",
+        "linkedin": "https://www.linkedin.com/in/exemple/",
+        "bio": "Biographie du membre. Peut contenir plusieurs paragraphes séparés par une ligne vide.",
+        "photo": "images/exemple-portrait.jpg"
+      }
+    ],
+    "actualites": [
+      {
+        "titre": "Titre de l'actualité",
+        "source": "Publié par Nom du média, le date",
+        "texte": "Résumé ou extrait de l'article.",
+        "lien": "https://exemple.fr/article"
+      }
+    ],
+    "mentions": {
+      "titre": "Mentions légales & politique de confidentialité",
+      "editeur_titre": "1. Éditeur du site",
+      "editeur_texte": "Nom du client\nAdresse complète\nTéléphone\nEmail\nDirecteur(s) de publication.",
+      "hebergeur_titre": "2. Hébergement",
+      "hebergeur_texte": "Nom de l'hébergeur\nAdresse de l'hébergeur.",
+      "cookies_titre": "3. Données personnelles & cookies",
+      "cookies_texte": "Ce site ne collecte pas de données personnelles sans consentement de l'utilisateur.",
+      "droits_titre": "4. Propriété intellectuelle",
+      "droits_texte": "L'ensemble du contenu de ce site est la propriété de Nom du client. Toute reproduction sans autorisation préalable est interdite."
+    }
+  },
+  "en": {
+    "seo": {
+      "index_title": "Client Name | Short tagline",
+      "index_description": "Short SEO description (150-160 characters).",
+      "cabinet_title": "The Team | Client Name",
+      "cabinet_description": "Team presentation.",
+      "actualites_title": "News | Client Name",
+      "actualites_description": "News and publications.",
+      "mentions_title": "Legal Notice | Client Name",
+      "mentions_description": "Legal notice and privacy policy."
+    },
+    "menu": {
+      "presentation": "home",
+      "cabinet": "team",
+      "actualites": "news"
+    },
+    "presentation": {
+      "titre": "Main homepage title",
+      "sous_titres": "Subtitle • Specialties • Keywords",
+      "contact": "contact@client.fr",
+      "adresse": "Full address, city",
+      "texte": "Main presentation text. Can contain multiple paragraphs separated by a blank line."
+    },
+    "membres": [
+      {
+        "nom": "First LASTNAME",
+        "role": "Title",
+        "email": "first@client.fr",
+        "telephone": "+33 0 00 00 00 00",
+        "linkedin": "https://www.linkedin.com/in/example/",
+        "bio": "Member biography. Can contain multiple paragraphs separated by a blank line.",
+        "photo": "images/example-portrait.jpg"
+      }
+    ],
+    "actualites": [
+      {
+        "titre": "News title",
+        "source": "Published by Media Name, date",
+        "texte": "Summary or excerpt of the article.",
+        "lien": "https://example.com/article"
+      }
+    ],
+    "mentions": {
+      "titre": "Legal Notice & Privacy Policy",
+      "editeur_titre": "1. Site Publisher",
+      "editeur_texte": "Client Name\nFull address\nPhone\nEmail\nPublishing Director(s).",
+      "hebergeur_titre": "2. Hosting",
+      "hebergeur_texte": "Host name\nHost address.",
+      "cookies_titre": "3. Personal Data & Cookies",
+      "cookies_texte": "This website does not collect personal data without user consent.",
+      "droits_titre": "4. Intellectual Property",
+      "droits_texte": "All content on this website is the property of Client Name. Any reproduction without prior authorization is prohibited."
+    }
+  }
+}
