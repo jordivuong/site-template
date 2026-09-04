@@ -1,0 +1,11 @@
+/* Preset "Sobre Marine" — classique, institutionnel, rassurant.
+   Inspiré des chartes graphiques sobres qui dominent les sites d'avocats
+   français (bleu marine, contrastes nets, peu de couleur). */
+:root {
+    --bg-cream: #F6F7F9;
+    --bg-white: #FFFFFF;
+    --text-dark: #16213A;
+    --accent-color: #22406B;
+    --text-grey: #5B6472;
+    --border-light: #E2E5EA;
+}

@@ -1,0 +1,11 @@
+/* Preset "Minimal Pastel" — épuré, lumineux, doux.
+   Inspiré de la tendance minimaliste/pastel actuelle chez les cabinets
+   d'avocats (fond très clair, une seule touche de couleur pastel). */
+:root {
+    --bg-cream: #FAF9F6;
+    --bg-white: #FFFFFF;
+    --text-dark: #2B2B2B;
+    --accent-color: #8FAE93;
+    --text-grey: #8A8A8A;
+    --border-light: #EDEDE8;
+}

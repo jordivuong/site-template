@@ -8,9 +8,15 @@ multilingue (FR/EN) à partir d'un fichier de contenu, avec déploiement automat
 - `data.json` → tout le contenu texte du site (FR + EN)
 - `build.js` → génère les pages HTML à partir de `data.json`
 - `style.css` → design du site, piloté par des **tokens** dans `:root`
-  (couleurs, tailles de police, espacements)
-- `admin.html` → interface simple pour éditer le contenu sans toucher au JSON à la main
-- `.github/workflows/deploy.yml` → build + déploiement automatique à chaque push
+  (couleurs, tailles de police, espacements) — voir `styles/README.md` pour
+  des presets de couleurs prêts à l'emploi
+- `admin.html` → interface protégée par mot de passe pour éditer le contenu ;
+  le bouton « Enregistrer et publier » committe directement `data.json` sur
+  GitHub via `api/save.js`, ce qui déclenche le redéploiement automatique
+- `api/save.js` → fonction serverless Vercel : vérifie le mot de passe puis
+  écrit sur GitHub (voir « Admin & mot de passe » ci-dessous)
+- `vercel.json` → indique à Vercel d'exécuter `node build.js` avant chaque
+  déploiement (le site n'a pas de `package.json`, donc pas de build sans ça)
 
 ## Pour dupliquer ce template sur un nouveau projet client
 
@@ -25,10 +31,34 @@ multilingue (FR/EN) à partir d'un fichier de contenu, avec déploiement automat
    modifier pour changer l'apparence globale.
 5. **Remplacer les images** dans `/images` et `/img` (photos, logo, favicon).
 6. **Configurer le déploiement** :
-   - Vercel : connecter le repo depuis le dashboard, aucune config supplémentaire.
+   - Vercel : connecter le repo depuis le dashboard (ou `vercel link` +
+     `vercel git connect` en CLI), aucune config de build supplémentaire
+     (déjà dans `vercel.json`).
    - Ou o2switch/FTP (comme Dang Fantou) : renseigner les secrets `SFTP_SERVER`,
      `SFTP_USERNAME`, `SFTP_PASSWORD` dans les secrets GitHub du repo.
-7. **Premier push** → le site est généré et déployé automatiquement.
+7. **Configurer l'admin** (voir section suivante) : ajouter les 4 variables
+   d'environnement Vercel du projet.
+8. **Premier push** → le site est généré et déployé automatiquement.
+
+## Admin & mot de passe (`admin.html`)
+
+`admin.html` permet d'éditer le contenu texte et de publier directement,
+sans toucher à GitHub à la main. Ça repose sur une fonction serverless
+(`api/save.js`) qui committe `data.json` à ta place — le token GitHub n'est
+donc jamais exposé côté client.
+
+À configurer une fois par projet client, dans Vercel → Project → Settings →
+Environment Variables :
+
+| Variable | Valeur |
+|---|---|
+| `ADMIN_PASSWORD` | Le mot de passe d'accès à `admin.html` |
+| `GITHUB_TOKEN` | Un Personal Access Token GitHub *fine-grained*, permission **Contents: Read and write**, limité à ce seul repo |
+| `GITHUB_REPO` | `owner/repo` du site client |
+| `GITHUB_BRANCH` | Branche à mettre à jour (`main` en général) |
+
+Après ajout des variables, redéployer une fois (`vercel --prod` ou un push)
+pour qu'elles soient prises en compte.
 
 ## Ajustements visuels courants
 

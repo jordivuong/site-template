@@ -1,0 +1,12 @@
+.vercel
+.env*
+
+# Pages générées par build.js (régénérées à chaque déploiement Vercel)
+index.html
+index-en.html
+cabinet.html
+cabinet-en.html
+actualites.html
+actualites-en.html
+mentions-legales.html
+mentions-legales-en.html

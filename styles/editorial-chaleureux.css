@@ -1,0 +1,11 @@
+/* Preset "Éditorial chaleureux" — style PAR DÉFAUT du template.
+   Typographie large et affirmée, ambiance chaleureuse.
+   Ces valeurs sont déjà celles de style.css — ce fichier sert de référence. */
+:root {
+    --bg-cream: #FCF9F0;
+    --bg-white: #FFFFFF;
+    --text-dark: #1A1A1A;
+    --accent-color: #FF967C;
+    --text-grey: #757575;
+    --border-light: #EBEBEB;
+}

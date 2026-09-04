@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Administration — Dang Fantou Avocates</title>
+    <title>Administration du site</title>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
     <style>
         :root {
@@ -11,20 +11,54 @@
             --panel-bg: #ffffff;
             --primary: #1a2b4c;
             --accent: #0073aa;
+            --success: #2ed573;
             --danger: #d9534f;
             --border: #dcdfe6;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg-color); color: #333; height: 100vh; overflow: hidden; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg-color); color: #333; min-height: 100vh; }
 
+        /* ---------- Écran de connexion ---------- */
+        #login-screen {
+            position: fixed; inset: 0; background: var(--primary);
+            display: flex; align-items: center; justify-content: center; z-index: 100;
+        }
+        #login-screen .box {
+            background: white; padding: 40px; border-radius: 10px; width: 320px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        #login-screen h1 { font-size: 18px; margin-bottom: 20px; color: var(--primary); }
+        #login-screen input {
+            width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 6px;
+            font-size: 15px; margin-bottom: 12px;
+        }
+        #login-screen button {
+            width: 100%; padding: 12px; border: none; border-radius: 6px; background: var(--primary);
+            color: white; font-weight: 600; cursor: pointer; font-size: 14px;
+        }
+        #login-error { color: var(--danger); font-size: 13px; margin-bottom: 10px; min-height: 16px; }
+
+        /* ---------- Éditeur ---------- */
+        #app { display: none; height: 100vh; overflow: hidden; }
         .layout { display: flex; height: 100vh; }
 
-        .editor-column { width: 55%; padding: 20px; overflow-y: auto; border-right: 1px solid var(--border); }
-        
-        .preview-column { width: 45%; background: #1e1e1e; color: #d4d4d4; display: flex; flex-direction: column; }
-        .preview-header { padding: 15px 20px; background: #252526; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; }
-        .preview-header h2 { font-size: 14px; text-transform: uppercase; letter-spacing: 1px; color: #858585; }
-        pre { flex: 1; padding: 20px; overflow: auto; font-family: "Fira Code", Monaco, Consolas, monospace; font-size: 13px; line-height: 1.5; color: #9cdcfe; }
+        .editor-column { flex: 1; padding: 20px; overflow-y: auto; }
+
+        .status-column {
+            width: 300px; background: #1e2733; color: #d4d4d4; display: flex; flex-direction: column;
+            border-left: 1px solid #333;
+        }
+        .status-column .inner { padding: 20px; }
+        .status-column h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: #8fa3bf; margin-bottom: 16px; }
+
+        .save-btn {
+            width: 100%; padding: 14px; border: none; border-radius: 6px; background: var(--success);
+            color: white; font-weight: 700; cursor: pointer; font-size: 15px; margin-bottom: 14px;
+        }
+        .save-btn:disabled { opacity: 0.6; cursor: wait; }
+        .save-msg { font-size: 13px; line-height: 1.5; padding: 12px; border-radius: 6px; background: #29384a; }
+        .save-msg.ok { background: #1f4d33; color: #a4f0c0; }
+        .save-msg.err { background: #4d1f1f; color: #f0a4a4; }
 
         .tabs { display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 2px solid var(--border); padding-bottom: 10px; flex-wrap: wrap; }
         .tab-btn { padding: 8px 14px; border: none; background: #e4e7ed; border-radius: 4px; cursor: pointer; font-weight: 600; color: #606266; font-size: 13px; }
@@ -36,10 +70,10 @@
 
         .section-panel { display: none; background: var(--panel-bg); padding: 20px; border-radius: 8px; border: 1px solid var(--border); }
         .section-panel.active { display: block; }
-        
+
         .card { background: #fafafa; border: 1px solid var(--border); border-radius: 6px; padding: 15px; margin-bottom: 15px; position: relative; }
         .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 8px; }
-        
+
         .drag-handle { cursor: grab; font-weight: bold; color: var(--accent); background: #eef6fc; padding: 4px 10px; border-radius: 4px; font-size: 13px; user-select: none; }
         .drag-handle:active { cursor: grabbing; }
 
@@ -52,126 +86,136 @@
 
         .btn { padding: 8px 14px; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; }
         .btn-danger { background: var(--danger); color: white; }
-        .btn-add { background: #2ed573; color: white; margin-top: 10px; width: 100%; justify-content: center; padding: 12px; }
-        .btn-copy { background: #2ed573; color: white; font-size: 14px; padding: 8px 16px; }
+        .btn-add { background: var(--success); color: white; margin-top: 10px; width: 100%; justify-content: center; padding: 12px; }
     </style>
 </head>
 <body>
 
-<div class="layout">
-    <div class="editor-column">
-        <h1 style="margin-bottom: 15px; font-size: 20px;">Éditeur de contenu</h1>
-
-        <div class="lang-selector">
-            <button class="lang-btn active" onclick="switchLang('fr')">Français (FR)</button>
-            <button class="lang-btn" onclick="switchLang('en')">Anglais (EN)</button>
-        </div>
-
-        <div class="tabs">
-            <button class="tab-btn active" onclick="switchTab('pres')">Présentation</button>
-            <button class="tab-btn" onclick="switchTab('membres')">Cabinet / Membres</button>
-            <button class="tab-btn" onclick="switchTab('actu')">Actualités</button>
-            <button class="tab-btn" onclick="switchTab('mentions')">Mentions légales</button>
-            <button class="tab-btn" onclick="switchTab('seo')">Réglages SEO</button>
-        </div>
-
-        <!-- ONGLET 1 : PRÉSENTATION -->
-        <div id="tab-pres" class="section-panel active">
-            <label>Titre principal</label>
-            <input type="text" id="pres-titre" oninput="updateData('presentation.titre', this.value)">
-
-            <label>Sous-titres</label>
-            <input type="text" id="pres-sous-titres" oninput="updateData('presentation.sous_titres', this.value)">
-
-            <label>Texte de présentation</label>
-            <textarea id="pres-texte" oninput="updateData('presentation.texte', this.value)"></textarea>
-
-            <label>Email de contact</label>
-            <input type="text" id="pres-contact" oninput="updateData('presentation.contact', this.value)">
-
-            <label>Adresse</label>
-            <input type="text" id="pres-adresse" oninput="updateData('presentation.adresse', this.value)">
-        </div>
-
-        <!-- ONGLET 2 : MEMBRES -->
-        <div id="tab-membres" class="section-panel">
-            <div id="membres-list"></div>
-            <button class="btn btn-add" onclick="addMembre()">+ Ajouter un membre</button>
-        </div>
-
-        <!-- ONGLET 3 : ACTUALITÉS -->
-        <div id="tab-actu" class="section-panel">
-            <p style="font-size: 12px; color: #666; margin-bottom: 12px;">💡 Attrapez le bouton <strong>« ☰ Attraper »</strong> pour déplacer une actualité entre deux cartes.</p>
-            <div id="actu-list"></div>
-            <button class="btn btn-add" onclick="addActu()">+ Ajouter une actualité</button>
-        </div>
-
-        <!-- ONGLET 4 : MENTIONS LÉGALES -->
-        <div id="tab-mentions" class="section-panel">
-            <label>Titre de la page</label>
-            <input type="text" id="mentions-titre" oninput="updateData('mentions.titre', this.value)">
-
-            <label>Titre - Éditeur</label>
-            <input type="text" id="mentions-editeur-titre" oninput="updateData('mentions.editeur_titre', this.value)">
-            <label>Texte - Éditeur</label>
-            <textarea id="mentions-editeur-texte" oninput="updateData('mentions.editeur_texte', this.value)"></textarea>
-
-            <label>Titre - Hébergeur</label>
-            <input type="text" id="mentions-hebergeur-titre" oninput="updateData('mentions.hebergeur_titre', this.value)">
-            <label>Texte - Hébergeur</label>
-            <textarea id="mentions-hebergeur-texte" oninput="updateData('mentions.hebergeur_texte', this.value)"></textarea>
-
-            <label>Titre - Cookies & Données</label>
-            <input type="text" id="mentions-cookies-titre" oninput="updateData('mentions.cookies_titre', this.value)">
-            <label>Texte - Cookies & Données</label>
-            <textarea id="mentions-cookies-texte" oninput="updateData('mentions.cookies_texte', this.value)"></textarea>
-
-            <label>Titre - Propriété intellectuelle</label>
-            <input type="text" id="mentions-droits-titre" oninput="updateData('mentions.droits_titre', this.value)">
-            <label>Texte - Propriété intellectuelle</label>
-            <textarea id="mentions-droits-texte" oninput="updateData('mentions.droits_texte', this.value)"></textarea>
-        </div>
-
-        <!-- ONGLET 5 : SEO -->
-        <div id="tab-seo" class="section-panel">
-            <h3 style="font-size: 15px; margin-bottom: 10px;">Page d'accueil</h3>
-            <label>Titre (Title Tag)</label>
-            <input type="text" id="seo-index-title" oninput="updateData('seo.index_title', this.value)">
-            <label>Méta description</label>
-            <textarea id="seo-index-description" oninput="updateData('seo.index_description', this.value)"></textarea>
-
-            <hr style="margin: 20px 0; border: none; border-top: 1px solid var(--border);">
-
-            <h3 style="font-size: 15px; margin-bottom: 10px;">Page Cabinet</h3>
-            <label>Titre (Title Tag)</label>
-            <input type="text" id="seo-cabinet-title" oninput="updateData('seo.cabinet_title', this.value)">
-            <label>Méta description</label>
-            <textarea id="seo-cabinet-description" oninput="updateData('seo.cabinet_description', this.value)"></textarea>
-
-            <hr style="margin: 20px 0; border: none; border-top: 1px solid var(--border);">
-
-            <h3 style="font-size: 15px; margin-bottom: 10px;">Page Actualités</h3>
-            <label>Titre (Title Tag)</label>
-            <input type="text" id="seo-actualites-title" oninput="updateData('seo.actualites_title', this.value)">
-            <label>Méta description</label>
-            <textarea id="seo-actualites-description" oninput="updateData('seo.actualites_description', this.value)"></textarea>
-
-            <hr style="margin: 20px 0; border: none; border-top: 1px solid var(--border);">
-
-            <h3 style="font-size: 15px; margin-bottom: 10px;">Page Mentions Légales</h3>
-            <label>Titre (Title Tag)</label>
-            <input type="text" id="seo-mentions-title" oninput="updateData('seo.mentions_title', this.value)">
-            <label>Méta description</label>
-            <textarea id="seo-mentions-description" oninput="updateData('seo.mentions_description', this.value)"></textarea>
-        </div>
+<div id="login-screen">
+    <div class="box">
+        <h1>🔒 Administration du site</h1>
+        <div id="login-error"></div>
+        <input type="password" id="login-password" placeholder="Mot de passe" autofocus>
+        <button onclick="tryLogin()">Se connecter</button>
     </div>
+</div>
 
-    <div class="preview-column">
-        <div class="preview-header">
-            <h2>JSON Généré</h2>
-            <button class="btn btn-copy" onclick="copierJSON()">Copier le JSON</button>
+<div id="app">
+    <div class="layout">
+        <div class="editor-column">
+            <h1 style="margin-bottom: 15px; font-size: 20px;">Éditeur de contenu</h1>
+
+            <div class="lang-selector">
+                <button class="lang-btn active" onclick="switchLang('fr')">Français (FR)</button>
+                <button class="lang-btn" onclick="switchLang('en')">Anglais (EN)</button>
+            </div>
+
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('pres')">Présentation</button>
+                <button class="tab-btn" onclick="switchTab('membres')">Cabinet / Membres</button>
+                <button class="tab-btn" onclick="switchTab('actu')">Actualités</button>
+                <button class="tab-btn" onclick="switchTab('mentions')">Mentions légales</button>
+                <button class="tab-btn" onclick="switchTab('seo')">Réglages SEO</button>
+            </div>
+
+            <!-- ONGLET 1 : PRÉSENTATION -->
+            <div id="tab-pres" class="section-panel active">
+                <label>Titre principal</label>
+                <input type="text" id="pres-titre" oninput="updateData('presentation.titre', this.value)">
+
+                <label>Sous-titres</label>
+                <input type="text" id="pres-sous-titres" oninput="updateData('presentation.sous_titres', this.value)">
+
+                <label>Texte de présentation</label>
+                <textarea id="pres-texte" oninput="updateData('presentation.texte', this.value)"></textarea>
+
+                <label>Email de contact</label>
+                <input type="text" id="pres-contact" oninput="updateData('presentation.contact', this.value)">
+
+                <label>Adresse</label>
+                <input type="text" id="pres-adresse" oninput="updateData('presentation.adresse', this.value)">
+            </div>
+
+            <!-- ONGLET 2 : MEMBRES -->
+            <div id="tab-membres" class="section-panel">
+                <div id="membres-list"></div>
+                <button class="btn btn-add" onclick="addMembre()">+ Ajouter un membre</button>
+            </div>
+
+            <!-- ONGLET 3 : ACTUALITÉS -->
+            <div id="tab-actu" class="section-panel">
+                <p style="font-size: 12px; color: #666; margin-bottom: 12px;">💡 Attrapez le bouton <strong>« ☰ Attraper »</strong> pour déplacer une actualité entre deux cartes.</p>
+                <div id="actu-list"></div>
+                <button class="btn btn-add" onclick="addActu()">+ Ajouter une actualité</button>
+            </div>
+
+            <!-- ONGLET 4 : MENTIONS LÉGALES -->
+            <div id="tab-mentions" class="section-panel">
+                <label>Titre de la page</label>
+                <input type="text" id="mentions-titre" oninput="updateData('mentions.titre', this.value)">
+
+                <label>Titre - Éditeur</label>
+                <input type="text" id="mentions-editeur-titre" oninput="updateData('mentions.editeur_titre', this.value)">
+                <label>Texte - Éditeur</label>
+                <textarea id="mentions-editeur-texte" oninput="updateData('mentions.editeur_texte', this.value)"></textarea>
+
+                <label>Titre - Hébergeur</label>
+                <input type="text" id="mentions-hebergeur-titre" oninput="updateData('mentions.hebergeur_titre', this.value)">
+                <label>Texte - Hébergeur</label>
+                <textarea id="mentions-hebergeur-texte" oninput="updateData('mentions.hebergeur_texte', this.value)"></textarea>
+
+                <label>Titre - Cookies & Données</label>
+                <input type="text" id="mentions-cookies-titre" oninput="updateData('mentions.cookies_titre', this.value)">
+                <label>Texte - Cookies & Données</label>
+                <textarea id="mentions-cookies-texte" oninput="updateData('mentions.cookies_texte', this.value)"></textarea>
+
+                <label>Titre - Propriété intellectuelle</label>
+                <input type="text" id="mentions-droits-titre" oninput="updateData('mentions.droits_titre', this.value)">
+                <label>Texte - Propriété intellectuelle</label>
+                <textarea id="mentions-droits-texte" oninput="updateData('mentions.droits_texte', this.value)"></textarea>
+            </div>
+
+            <!-- ONGLET 5 : SEO -->
+            <div id="tab-seo" class="section-panel">
+                <h3 style="font-size: 15px; margin-bottom: 10px;">Page d'accueil</h3>
+                <label>Titre (Title Tag)</label>
+                <input type="text" id="seo-index-title" oninput="updateData('seo.index_title', this.value)">
+                <label>Méta description</label>
+                <textarea id="seo-index-description" oninput="updateData('seo.index_description', this.value)"></textarea>
+
+                <hr style="margin: 20px 0; border: none; border-top: 1px solid var(--border);">
+
+                <h3 style="font-size: 15px; margin-bottom: 10px;">Page Cabinet</h3>
+                <label>Titre (Title Tag)</label>
+                <input type="text" id="seo-cabinet-title" oninput="updateData('seo.cabinet_title', this.value)">
+                <label>Méta description</label>
+                <textarea id="seo-cabinet-description" oninput="updateData('seo.cabinet_description', this.value)"></textarea>
+
+                <hr style="margin: 20px 0; border: none; border-top: 1px solid var(--border);">
+
+                <h3 style="font-size: 15px; margin-bottom: 10px;">Page Actualités</h3>
+                <label>Titre (Title Tag)</label>
+                <input type="text" id="seo-actualites-title" oninput="updateData('seo.actualites_title', this.value)">
+                <label>Méta description</label>
+                <textarea id="seo-actualites-description" oninput="updateData('seo.actualites_description', this.value)"></textarea>
+
+                <hr style="margin: 20px 0; border: none; border-top: 1px solid var(--border);">
+
+                <h3 style="font-size: 15px; margin-bottom: 10px;">Page Mentions Légales</h3>
+                <label>Titre (Title Tag)</label>
+                <input type="text" id="seo-mentions-title" oninput="updateData('seo.mentions_title', this.value)">
+                <label>Méta description</label>
+                <textarea id="seo-mentions-description" oninput="updateData('seo.mentions_description', this.value)"></textarea>
+            </div>
         </div>
-        <pre id="json-output"></pre>
+
+        <div class="status-column">
+            <div class="inner">
+                <h2>Publication</h2>
+                <button class="save-btn" id="save-btn" onclick="saveToGitHub()">💾 Enregistrer et publier</button>
+                <div class="save-msg" id="save-msg">Les modifications sont d'abord enregistrées ici, puis publiées sur GitHub quand tu cliques sur « Enregistrer et publier ». Le site se met à jour automatiquement environ 30 secondes après.</div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -180,14 +224,49 @@
     let currentLang = 'fr';
     let currentTab = 'pres';
     let sortableInstance = null;
+    let adminPassword = null;
 
-    fetch('data.json?v=' + Date.now())
-        .then(res => res.json())
-        .then(data => {
-            siteData = data;
-            render();
-        })
-        .catch(err => alert("Erreur au chargement du fichier data.json"));
+    /* ---------- Connexion ---------- */
+    document.getElementById('login-password').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') tryLogin();
+    });
+
+    async function tryLogin() {
+        const pw = document.getElementById('login-password').value;
+        const errBox = document.getElementById('login-error');
+        errBox.textContent = '';
+        if (!pw) return;
+
+        try {
+            const res = await fetch('/api/save', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password: pw, verifyOnly: true })
+            });
+            if (!res.ok) {
+                const body = await res.json().catch(() => ({}));
+                errBox.textContent = body.error || 'Mot de passe incorrect';
+                return;
+            }
+            adminPassword = pw;
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('app').style.display = 'block';
+            loadData();
+        } catch (e) {
+            errBox.textContent = "Erreur de connexion au serveur";
+        }
+    }
+
+    /* ---------- Chargement des données ---------- */
+    function loadData() {
+        fetch('data.json?v=' + Date.now())
+            .then(res => res.json())
+            .then(data => {
+                siteData = data;
+                render();
+            })
+            .catch(() => alert("Erreur au chargement du fichier data.json"));
+    }
 
     function render() {
         renderPres();
@@ -195,11 +274,6 @@
         renderActu();
         renderMentions();
         renderSEO();
-        renderJSON();
-    }
-
-    function renderJSON() {
-        document.getElementById('json-output').textContent = JSON.stringify(siteData, null, 2);
     }
 
     function renderPres() {
@@ -224,17 +298,17 @@
                         <button class="btn btn-danger" onclick="deleteMembre(${idx})">Supprimer</button>
                     </div>
                     <label>Nom</label>
-                    <input type="text" value="${m.nom || ''}" oninput="siteData['${currentLang}'].membres[${idx}].nom = this.value; renderJSON();">
+                    <input type="text" value="${m.nom || ''}" oninput="siteData['${currentLang}'].membres[${idx}].nom = this.value;">
                     <label>Rôle</label>
-                    <input type="text" value="${m.role || ''}" oninput="siteData['${currentLang}'].membres[${idx}].role = this.value; renderJSON();">
+                    <input type="text" value="${m.role || ''}" oninput="siteData['${currentLang}'].membres[${idx}].role = this.value;">
                     <label>Email</label>
-                    <input type="text" value="${m.email || ''}" oninput="siteData['${currentLang}'].membres[${idx}].email = this.value; renderJSON();">
+                    <input type="text" value="${m.email || ''}" oninput="siteData['${currentLang}'].membres[${idx}].email = this.value;">
                     <label>Téléphone</label>
-                    <input type="text" value="${m.telephone || ''}" oninput="siteData['${currentLang}'].membres[${idx}].telephone = this.value; renderJSON();">
+                    <input type="text" value="${m.telephone || ''}" oninput="siteData['${currentLang}'].membres[${idx}].telephone = this.value;">
                     <label>Photo (chemin)</label>
-                    <input type="text" value="${m.photo || ''}" oninput="siteData['${currentLang}'].membres[${idx}].photo = this.value; renderJSON();">
+                    <input type="text" value="${m.photo || ''}" oninput="siteData['${currentLang}'].membres[${idx}].photo = this.value;">
                     <label>Bio</label>
-                    <textarea oninput="siteData['${currentLang}'].membres[${idx}].bio = this.value; renderJSON();">${m.bio || ''}</textarea>
+                    <textarea oninput="siteData['${currentLang}'].membres[${idx}].bio = this.value;">${m.bio || ''}</textarea>
                 </div>`;
         });
     }
@@ -266,19 +340,19 @@
                     <button class="btn btn-danger" onclick="deleteActu(${idx})">Supprimer</button>
                 </div>
                 <label>Titre de l'article</label>
-                <input type="text" value="${a.titre || ''}" oninput="siteData['${currentLang}'].actualites[${idx}].titre = this.value; renderJSON();">
+                <input type="text" value="${a.titre || ''}" oninput="siteData['${currentLang}'].actualites[${idx}].titre = this.value;">
                 <label>Source / Date</label>
-                <input type="text" value="${a.source || ''}" oninput="siteData['${currentLang}'].actualites[${idx}].source = this.value; renderJSON();">
+                <input type="text" value="${a.source || ''}" oninput="siteData['${currentLang}'].actualites[${idx}].source = this.value;">
                 <label>Lien externe</label>
-                <input type="text" value="${a.lien || ''}" oninput="siteData['${currentLang}'].actualites[${idx}].lien = this.value; renderJSON();">
+                <input type="text" value="${a.lien || ''}" oninput="siteData['${currentLang}'].actualites[${idx}].lien = this.value;">
                 <label>Contenu de l'article</label>
-                <textarea oninput="siteData['${currentLang}'].actualites[${idx}].texte = this.value; renderJSON();">${a.texte || ''}</textarea>
+                <textarea oninput="siteData['${currentLang}'].actualites[${idx}].texte = this.value;">${a.texte || ''}</textarea>
             `;
             container.appendChild(card);
         });
 
         if (sortableInstance) sortableInstance.destroy();
-        
+
         sortableInstance = new Sortable(container, {
             handle: '.drag-handle',
             animation: 150,
@@ -288,9 +362,7 @@
                 const list = siteData[currentLang].actualites;
                 const [movedItem] = list.splice(evt.oldIndex, 1);
                 list.splice(evt.newIndex, 0, movedItem);
-                
                 renderActu();
-                renderJSON();
             }
         });
     }
@@ -335,14 +407,13 @@
         const keys = path.split('.');
         if (!siteData[currentLang][keys[0]]) siteData[currentLang][keys[0]] = {};
         siteData[currentLang][keys[0]][keys[1]] = val;
-        renderJSON();
     }
 
     function switchTab(tab) {
         currentTab = tab;
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
         document.querySelectorAll('.section-panel').forEach(p => p.classList.remove('active'));
-        
+
         event.target.classList.add('active');
         document.getElementById(`tab-${tab}`).classList.add('active');
     }
@@ -354,11 +425,37 @@
         render();
     }
 
-    function copierJSON() {
-        const jsonString = JSON.stringify(siteData, null, 2);
-        navigator.clipboard.writeText(jsonString).then(() => {
-            alert("JSON copié dans le presse-papier ! Vous pouvez le coller directement sur GitHub.");
-        });
+    /* ---------- Sauvegarde vers GitHub ---------- */
+    async function saveToGitHub() {
+        const btn = document.getElementById('save-btn');
+        const msg = document.getElementById('save-msg');
+        btn.disabled = true;
+        btn.textContent = '⏳ Publication en cours…';
+        msg.className = 'save-msg';
+        msg.textContent = 'Envoi vers GitHub…';
+
+        try {
+            const res = await fetch('/api/save', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password: adminPassword, data: siteData })
+            });
+            const body = await res.json().catch(() => ({}));
+
+            if (!res.ok) {
+                msg.className = 'save-msg err';
+                msg.textContent = '❌ ' + (body.error || 'Échec de la publication');
+            } else {
+                msg.className = 'save-msg ok';
+                msg.textContent = '✅ Publié ! Le site se met à jour automatiquement, ça prend environ 30 secondes.';
+            }
+        } catch (e) {
+            msg.className = 'save-msg err';
+            msg.textContent = '❌ Erreur réseau : ' + e.message;
+        } finally {
+            btn.disabled = false;
+            btn.textContent = '💾 Enregistrer et publier';
+        }
     }
 </script>
 </body>
