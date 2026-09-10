@@ -133,12 +133,12 @@ function generatePageTemplate({ lang, pageKey, title, description, canonicalUrl,
     <script>document.documentElement.classList.add('curtain-down', 'text-hidden', 'header-hidden');</script>
 </head>
 <body class="${pageKey === 'index' ? 'page-accueil' : ''}">
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TJM9CWVP" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=${CONFIG.GTM_ID}" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     <div class="top-section ${pageKey === 'index' ? 'top-section-home' : 'top-section-page'}">
         <header>
             <a href="${isFr ? 'index.html' : 'index-en.html'}" class="logo">
-                <img src="img/Dang-Fantou-Logo.svg" alt="Dang Fantou Avocates" class="logo-img">
+                <img src="img/logo.svg" alt="${CONFIG.SCHEMA_NAME}" class="logo-img">
             </a>
             <nav>
                 <ul>

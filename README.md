@@ -1,6 +1,6 @@
 # Template de site vitrine — à dupliquer par client
 
-Base réplicable inspirée du site du cabinet Dang Fantou. Génère un site statique
+Base réplicable pour site vitrine de cabinet d'avocats. Génère un site statique
 multilingue (FR/EN) à partir d'un fichier de contenu, avec déploiement automatique.
 
 ## Comment ça marche
@@ -29,12 +29,14 @@ multilingue (FR/EN) à partir d'un fichier de contenu, avec déploiement automat
 4. **Ajuster les tokens dans `style.css`** (`:root`) pour l'identité visuelle du
    client : couleurs, tailles de police, espacements. C'est le seul endroit à
    modifier pour changer l'apparence globale.
-5. **Remplacer les images** dans `/images` et `/img` (photos, logo, favicon).
+5. **Remplacer les images** dans `/images` et `/img` (photos, logo — le logo
+   doit être placé dans `img/logo.svg` pour correspondre à `build.js`,
+   favicon).
 6. **Configurer le déploiement** :
    - Vercel : connecter le repo depuis le dashboard (ou `vercel link` +
      `vercel git connect` en CLI), aucune config de build supplémentaire
      (déjà dans `vercel.json`).
-   - Ou o2switch/FTP (comme Dang Fantou) : renseigner les secrets `SFTP_SERVER`,
+   - Ou o2switch/FTP : renseigner les secrets `SFTP_SERVER`,
      `SFTP_USERNAME`, `SFTP_PASSWORD` dans les secrets GitHub du repo.
 7. **Configurer l'admin** (voir section suivante) : ajouter les 4 variables
    d'environnement Vercel du projet.
