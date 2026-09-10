@@ -36,8 +36,14 @@ multilingue (FR/EN) à partir d'un fichier de contenu, avec déploiement automat
    - Vercel : connecter le repo depuis le dashboard (ou `vercel link` +
      `vercel git connect` en CLI), aucune config de build supplémentaire
      (déjà dans `vercel.json`).
-   - Ou o2switch/FTP : renseigner les secrets `SFTP_SERVER`,
-     `SFTP_USERNAME`, `SFTP_PASSWORD` dans les secrets GitHub du repo.
+   - Ou o2switch/FTP (hébergement mutualisé) : voir
+     `.github/workflows/deploy-ftp.yml`, renseigner les secrets `SFTP_SERVER`,
+     `SFTP_USERNAME`, `SFTP_PASSWORD` (+ `SFTP_PORT`, `SFTP_REMOTE_PATH`
+     optionnels) dans GitHub → Settings → Secrets and variables → Actions du
+     repo. Sans ces secrets, ce workflow ne fait rien — aucun impact si le
+     client est sur Vercel. Sur ce mode, `admin.html` ne peut pas publier
+     automatiquement (pas de fonction serverless disponible) : éditer
+     `data.json` directement sur GitHub déclenche quand même le redéploiement.
 7. **Configurer l'admin** (voir section suivante) : ajouter les 4 variables
    d'environnement Vercel du projet.
 8. **Premier push** → le site est généré et déployé automatiquement.

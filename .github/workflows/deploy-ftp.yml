@@ -1,0 +1,69 @@
+name: Déploiement SFTP (hébergement mutualisé)
+#
+# Alternative à Vercel pour les clients hébergés chez o2switch ou un hébergeur
+# mutualisé classique. Génère le site avec build.js puis l'envoie en SFTP.
+#
+# Ne fait RIEN tant que le secret SFTP_SERVER n'est pas configuré (donc aucun
+# impact sur les clients qui restent sur Vercel — ce fichier peut rester tel
+# quel dans tous les repos dupliqués).
+#
+# Secrets à créer dans GitHub → Settings → Secrets and variables → Actions :
+#   SFTP_SERVER       (obligatoire) — ex: ftp.o2switch.net
+#   SFTP_USERNAME     (obligatoire)
+#   SFTP_PASSWORD     (obligatoire)
+#   SFTP_PORT         (optionnel, défaut 22)
+#   SFTP_REMOTE_PATH  (optionnel, défaut /) — dossier distant, ex: /www/
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Vérifier que le SFTP est configuré
+        id: check
+        run: |
+          if [ -z "${{ secrets.SFTP_SERVER }}" ]; then
+            echo "SFTP_SERVER n'est pas configuré — déploiement SFTP ignoré (le client utilise probablement Vercel)."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/setup-node@v4
+        if: steps.check.outputs.skip == 'false'
+        with:
+          node-version: 20
+
+      - name: Générer le site
+        if: steps.check.outputs.skip == 'false'
+        run: node build.js
+
+      - name: Préparer les fichiers à déployer
+        if: steps.check.outputs.skip == 'false'
+        run: |
+          mkdir -p dist
+          # Liste explicite : n'inclut pas admin.html / api/ (spécifiques à
+          # Vercel, inutiles — et non fonctionnels — sur un hébergement FTP)
+          cp index.html index-en.html cabinet.html cabinet-en.html \
+             actualites.html actualites-en.html \
+             mentions-legales.html mentions-legales-en.html \
+             style.css script.js data.json dist/
+          [ -d img ] && cp -r img dist/ || true
+          [ -d images ] && cp -r images dist/ || true
+
+      - name: Déployer en SFTP
+        if: steps.check.outputs.skip == 'false'
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.5
+        with:
+          server: ${{ secrets.SFTP_SERVER }}
+          username: ${{ secrets.SFTP_USERNAME }}
+          password: ${{ secrets.SFTP_PASSWORD }}
+          port: ${{ secrets.SFTP_PORT || 22 }}
+          local_path: './dist/*'
+          remote_path: ${{ secrets.SFTP_REMOTE_PATH || '/' }}
